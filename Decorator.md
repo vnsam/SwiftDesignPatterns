@@ -218,6 +218,11 @@ class ConcretePowerUpgradedSpeaker: PowerUpgradeDecorator {
 
 The default implementations in the `Decorator` protocols would help in unit testing. The mock objects would have to do nothing. In fact we only need the mock object to create instances of `PowerUpgradeDecorator` and `BassUpgradeDecorator` protocols.
 
+**Decorator with Swift enums**
+
+Another example of a decorator pattern with `enum`.
+
+```swift
 protocol Pizza {
     var description: String { get }
     var cost: Double { get }
@@ -312,6 +317,7 @@ print("Pizza - \(pizza.description) -- \(pizza.cost)\n")
 pizza = ConcretePizzaTopping(pizza: pizza, topping: .cheese)
 print("Decorated Pizza - \(pizza.description) -- \(pizza.cost)\n")
 // prints "Decorated Pizza - A thin crust Pizza with cheese topping. -- 2.5900000000000003"
+```
 
 **Testing:**
 
