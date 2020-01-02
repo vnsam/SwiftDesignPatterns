@@ -217,3 +217,102 @@ class ConcretePowerUpgradedSpeaker: PowerUpgradeDecorator {
 **Testing:**
 
 The default implementations in the `Decorator` protocols would help in unit testing. The mock objects would have to do nothing. In fact we only need the mock object to create instances of `PowerUpgradeDecorator` and `BassUpgradeDecorator` protocols.
+
+protocol Pizza {
+    var description: String { get }
+    var cost: Double { get }
+}
+
+enum PizzaCrust {
+    case thin
+    case thick
+    
+    var description: String {
+        switch self {
+        case .thin:
+            return "A thin crust Pizza"
+        case .thick:
+            return "A thick crust Pizza"
+        }
+    }
+    
+    var cost: Double {
+        switch self {
+        case .thin: return 0.50
+        case .thick: return 0.70
+        }
+    }
+}
+
+class ConcretePizza: Pizza {
+    private var crust: PizzaCrust
+    
+    var description: String {
+        return crust.description
+    }
+    
+    var cost: Double { return 1.99 + crust.cost } // 1.99 Pizza cost
+    
+    required init(crust: PizzaCrust) {
+        self.crust = crust
+    }
+}
+
+enum PizzaTopping {
+    case cheese
+    case olive
+    case pepper
+    
+    var description: String {
+        switch self {
+        case .cheese: return "cheese topping."
+        case .olive: return "olive topping."
+        case .pepper: return "pepper topping."
+        }
+    }
+    
+    var cost: Double {
+        switch self {
+        case .cheese: return 0.10
+        case .olive: return 0.30
+        case .pepper: return 0.70
+        }
+    }
+}
+
+protocol PizzaToppingDecorator: Pizza {
+    var pizza: Pizza { get }
+    var topping: PizzaTopping { get }
+    
+    init(pizza: Pizza, topping: PizzaTopping)
+}
+
+extension PizzaToppingDecorator {
+    var description: String {
+        return "\(pizza.description + " with \(topping.description)")"
+    }
+    
+    var cost: Double { return pizza.cost + topping.cost }
+}
+
+class ConcretePizzaTopping: PizzaToppingDecorator {
+    var pizza: Pizza
+    var topping: PizzaTopping
+    
+    required init(pizza: Pizza, topping: PizzaTopping) {
+        self.pizza = pizza
+        self.topping = topping
+    }
+}
+
+var pizza: Pizza = ConcretePizza(crust: .thin)
+print("Pizza - \(pizza.description) -- \(pizza.cost)\n")
+// prints "Pizza - A thin crust Pizza -- 2.49"
+
+pizza = ConcretePizzaTopping(pizza: pizza, topping: .cheese)
+print("Decorated Pizza - \(pizza.description) -- \(pizza.cost)\n")
+// prints "Decorated Pizza - A thin crust Pizza with cheese topping. -- 2.5900000000000003"
+
+**Testing:**
+
+In this approach the `enum` can be tested independently since the core logic `description` and `cost` is computed in the `enum.`
